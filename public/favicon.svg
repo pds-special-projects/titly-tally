@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <title>Cities of Champions</title>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2">
+    <!-- top left: baseball (MLB) -->
+    <g transform="translate(1 1) scale(0.6667)" stroke="#D93636">
+      <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM6.3 5.2c2.4 2.4 2.4 11.2 0 13.6M17.7 5.2c-2.4 2.4-2.4 11.2 0 13.6"/>
+    </g>
+    <!-- top right: hockey stick and puck (NHL) -->
+    <g transform="translate(17 1) scale(0.6667)" stroke="#2F6FE0">
+      <path d="M6 3l7.5 14h5.5M14.5 20.5a2.5 1 0 105 0 2.5 1 0 10-5 0"/>
+    </g>
+    <!-- bottom left: basketball (NBA) -->
+    <g transform="translate(1 17) scale(0.6667)" stroke="#2E9E48">
+      <path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 3v18M3 12h18M5.6 5.6c3 3.2 3 9.6 0 12.8M18.4 5.6c-3 3.2-3 9.6 0 12.8"/>
+    </g>
+    <!-- bottom right: football (NFL) -->
+    <g transform="translate(17 17) scale(0.6667)" stroke="#E0A800">
+      <path d="M3.5 20.5C2.8 11.5 11.5 2.8 20.5 3.5 21.2 12.5 12.5 21.2 3.5 20.5zM9.2 14.8l5.6-5.6M9.6 12.6l1.8 1.8M11.1 11.1l1.8 1.8M12.6 9.6l1.8 1.8"/>
+    </g>
+  </g>
+</svg>

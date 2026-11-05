@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cities of Champions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every champion of MLB, NHL, NBA and NFL since 1903, grouped by metro area. Rank the cities, map the clusters and compare them side by side.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Cities of Champions">
+<meta property="og:description" content="Which cities win? Every MLB, NHL, NBA and NFL champion since 1903, grouped by metro area.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+body{margin:0;background:#fbfaf6}
+.coc{
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --paper:#fbfaf6;--ink:#1b1f23;--surface:#ffffff;--ink-muted:#4b535a;--line:#e2dfd6;
+  --brand:#0f6b66;--on-brand:#ffffff;--brand-text:#0b5b57;--line-strong:#767b80;--sunken:#f1efe8;--brand-soft:#e1f0ee;
+  --accent:#f2b53a;--on-accent:#1b1f23;--accent-text:#7a5200;--accent-soft:#fdf0d0;
+  --focus:#2456a6;--info:#2456a6;--info-soft:#e4ecfa;--danger:#b3261e;--danger-soft:#fbe6e3;
+  --c-mlb:#C62828;--c-nhl:#2060D8;--c-nba:#2E8B3E;--c-nfl:#B88400;
+  --shadow-pop:0 10px 28px rgba(27,31,35,.14),0 1px 3px rgba(27,31,35,.1);
+  --sp-1:4px;
+  --sp-2:clamp(6px,calc(6px + 2 * (100vw - 360px) / 1560),8px);
+  --sp-3:clamp(10px,calc(10px + 2 * (100vw - 360px) / 1560),12px);
+  --sp-4:clamp(14px,calc(14px + 6 * (100vw - 360px) / 1560),20px);
+  --sp-5:clamp(20px,calc(20px + 12 * (100vw - 360px) / 1560),32px);
+  --sp-6:clamp(28px,calc(28px + 20 * (100vw - 360px) / 1560),48px);
+  --sp-7:clamp(40px,calc(40px + 40 * (100vw - 360px) / 1560),80px);
+  --sp-8:clamp(56px,calc(56px + 72 * (100vw - 360px) / 1560),128px);
+  background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.7px;line-height:1.6;min-height:100vh;
+}
+.coc[data-theme="dark"]{
+  --paper:#14171a;--ink:#eceff1;--surface:#1c2024;--ink-muted:#aab3ba;--line:#2d3339;
+  --brand:#5fc2b8;--on-brand:#0b1f1d;--brand-text:#7ad4ca;--line-strong:#8a949c;--sunken:#101316;--brand-soft:#1a3330;
+  --accent:#f2b53a;--on-accent:#1b1f23;--accent-text:#f4c35a;--accent-soft:#3a2f12;
+  --focus:#8db4f0;--info:#8db4f0;--info-soft:#1c2a42;--danger:#ff9a90;--danger-soft:#43201d;
+  --c-mlb:#FF7A7A;--c-nhl:#6AA6FF;--c-nba:#4CC26A;--c-nfl:#F2C230;
+  --shadow-pop:0 10px 28px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.4);
+}
+.coc *{box-sizing:border-box}
+.coc a{color:var(--brand-text)}
+.coc a:hover{color:var(--ink)}
+.coc :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+.coc .wrap{max-width:1240px;margin:0 auto;padding-left:var(--sp-5);padding-right:var(--sp-5)}
+.coc .h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.25rem,calc(2.25rem + 1.75 * (100vw - 360px) / 1560 * 1.0),4rem);line-height:1.05;letter-spacing:-.018em;margin:0;text-wrap:balance}
+.coc .h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.75rem,calc(1.75rem + 1 * (100vw - 360px) / 1560),2.75rem);line-height:1.1;letter-spacing:-.012em;margin:0;text-wrap:balance}
+.coc .h3{font-family:var(--serif);font-weight:600;font-size:clamp(1.375rem,calc(1.375rem + .625 * (100vw - 360px) / 1560),2rem);line-height:1.2;margin:0}
+.coc .h4{font-family:var(--serif);font-weight:600;font-size:clamp(1.1875rem,calc(1.1875rem + .3125 * (100vw - 360px) / 1560),1.5rem);line-height:1.3;margin:0}
+.coc .h1 em,.coc .h2 em,.coc .h3 em{font-style:italic;color:var(--brand-text)}
+.coc .lead{font-size:19px;line-height:1.55;margin:0;max-width:68ch;color:var(--ink)}
+.coc .small{font-size:14.6px;line-height:1.5}
+.coc .caption{font-size:13.6px;line-height:1.45;color:var(--ink-muted);margin:0}
+.coc .overline{font-family:var(--mono);font-size:12.5px;line-height:1.3;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin:0}
+.coc .mono{font-family:var(--mono);font-size:13px;color:var(--ink-muted)}
+.coc .stat{font-family:var(--serif);font-weight:600;font-size:clamp(1.75rem,calc(1.75rem + 1 * (100vw - 360px) / 1560),2.75rem);line-height:1;letter-spacing:-.012em}
+.coc .card{background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.coc .panel{background:var(--surface);border:1px solid var(--line);border-radius:28px}
+.coc .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 var(--sp-4);border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 14.6px/1.2 var(--sans);cursor:pointer;transition:transform .16s ease}
+.coc .btn:hover{transform:translateY(-2px)}
+.coc .btn[aria-pressed="true"]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-text)}
+.coc .btn-primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.coc .btn-sm{min-height:36px;padding:0 var(--sp-3)}
+.coc .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.coc .btn-icon{width:44px;padding:0}
+.coc .navlink{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-3);border-radius:12px;text-decoration:none;font-weight:600;font-size:14.6px;color:var(--ink)}
+.coc .navlink:hover{background:var(--sunken);color:var(--ink)}
+.coc .btn[aria-selected="true"]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-text)}
+.coc .stickytop{position:sticky;top:0;z-index:30}
+.coc section[id]{scroll-margin-top:150px}
+.coc .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-4)}
+.coc .hdr-brand{order:1;display:flex;align-items:center;gap:var(--sp-2);flex:0 0 auto}
+.coc .hdr-theme{order:2;margin-left:auto;flex:0 0 auto}
+.coc .hdr-nav{order:3;flex:1 0 100%;min-width:0;display:flex;flex-wrap:nowrap;gap:0 var(--sp-1);overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
+.coc .hdr-nav .navlink{flex:0 0 auto;white-space:nowrap}
+@media (min-width:900px){.coc .hdr{flex-wrap:nowrap;gap:0 var(--sp-4)}.coc .hdr-nav{order:2;flex:1 1 0%}.coc .hdr-theme{order:3;margin-left:0}}
+.coc .lgi{width:18px;height:18px;flex:0 0 auto;display:inline-block;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.coc .lg-mlb{color:var(--c-mlb)}
+.coc .lg-nhl{color:var(--c-nhl)}
+.coc .lg-nba{color:var(--c-nba)}
+.coc .lg-nfl{color:var(--c-nfl)}
+.coc .sw-mlb{background:var(--c-mlb)}
+.coc .sw-nhl{background:var(--c-nhl)}
+.coc .sw-nba{background:var(--c-nba)}
+.coc .sw-nfl{background:var(--c-nfl)}
+.coc .cellempty{background:var(--sunken)}
+.coc .chip{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 var(--sp-3);border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);font-weight:600;font-size:14.6px}
+.coc .chipx{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;border:0;background:transparent;color:var(--ink);cursor:pointer;padding:0}
+.coc .chipx:hover{background:var(--sunken)}
+.coc .chip[draggable="true"]{cursor:grab}
+.coc .chip[data-over="true"]{outline:2px dashed var(--brand);outline-offset:2px}
+.coc .select{min-height:44px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 14.6px/1.2 var(--sans);padding:0 var(--sp-3)}
+.coc .stchip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink);border:1px solid transparent}
+.coc .st-won{background:var(--brand-soft);border-color:var(--brand)}
+.coc .st-wait{background:var(--accent-soft);border-color:var(--accent-text)}
+.coc .st-left{background:var(--sunken);border-color:var(--line-strong)}
+.coc .st-none{background:transparent;border:1px dashed var(--line-strong);color:var(--ink-muted)}
+.coc .leadchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--brand-text);background:var(--brand-soft);border-radius:999px;padding:2px 8px}
+.coc .pendchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);border-radius:999px;padding:2px 8px}
+.coc .tsw{display:inline-flex;flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-strong);overflow:hidden}
+.coc .tsw i{flex:1 1 0%;display:block}
+.coc .mapwrap{position:relative;margin:0 auto;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--sunken)}
+.coc .pin{position:absolute;width:32px;height:32px;margin:-16px 0 0 -16px;padding:0;border:0;background:transparent;cursor:pointer;display:block}
+.coc .pin i{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);display:block;transition:transform .16s ease}
+.coc .pin:hover i{transform:scale(1.35)}
+.coc .pin[aria-pressed="true"] i{background:var(--accent)}
+.coc .pinlbl{position:absolute;left:24px;top:50%;transform:translateY(-50%);white-space:nowrap;pointer-events:none;font-size:12.5px;font-weight:600;line-height:1.2;color:var(--ink);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 5px var(--paper)}
+.coc .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);border:0;white-space:nowrap}
+.coc ul.plain,.coc ol.plain{list-style:none;margin:0;padding:0}
+@media (prefers-reduced-motion:reduce){.coc .btn{transition:none}.coc .btn:hover{transform:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><p style="font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:2rem auto;padding:0 1rem">Cities of Champions needs JavaScript to draw its rankings, map and charts.</p></noscript>
+
+<!-- Markup template. Rendered by /runtime.js: {{path}} holes, <sc-if>, <sc-for> and on* handlers. -->
+<script type="text/x-template" id="tpl">
+<div class="coc" data-theme="{{theme}}">
+
+  <div class="stickytop">
+  <sc-if value="{{banner.open}}" hint-placeholder-val="{{true}}">
+    <div role="region" aria-label="Update" style="background:var(--info-soft);border-bottom:1px solid var(--info)">
+      <div class="wrap" style="display:flex;gap:var(--sp-3);align-items:flex-start;padding-top:var(--sp-3);padding-bottom:var(--sp-3)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;margin-top:2px"><path d="{{icons.clock}}"></path></svg>
+        <div style="flex:1 1 auto;min-width:0">
+          <p class="overline" style="color:var(--info)">Update · 2026 World Series final</p>
+          <p class="small" style="margin:var(--sp-1) 0 0">{{hero.pending}}</p>
+        </div>
+        <button class="chipx" type="button" aria-label="Dismiss this update" onClick="{{banner.dismiss}}" style="flex:0 0 auto;width:44px;height:44px;margin:-8px -10px -8px 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icons.x}}"></path></svg></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <header style="background:var(--surface);border-bottom:1px solid var(--line)">
+    <div class="wrap hdr" style="padding-top:var(--sp-2);padding-bottom:var(--sp-2)">
+      <div class="hdr-brand">
+        <span aria-hidden="true" style="width:20px;height:20px;border-radius:6px;background:var(--brand);display:inline-block"></span>
+        <span style="font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.2;white-space:nowrap">Cities of Champions</span>
+      </div>
+      <nav class="hdr-nav" aria-label="Sections">
+        <a class="navlink" href="#rankings">Rankings</a>
+        <a class="navlink" href="#map">Map</a>
+        <a class="navlink" href="#compare">Compare</a>
+        <a class="navlink" href="#time">When they won</a>
+        <a class="navlink" href="#race">Title race</a>
+        <a class="navlink" href="#matrix">By league</a>
+        <a class="navlink" href="#waiting">Still waiting</a>
+        <a class="navlink" href="#notes" onClick="{{notes.openIt}}">About the data</a>
+      </nav>
+      <button class="btn btn-icon hdr-theme" type="button" onClick="{{toggleTheme}}" aria-label="{{themeLabel}}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{themeIconD}}"></path></svg>
+      </button>
+    </div>
+  </header>
+  </div>
+
+  <section class="wrap" style="padding-top:var(--sp-7);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-5)">
+    <p class="overline">MLB · NHL · NBA · NFL · 1903 to 2026 · as of {{hero.asOf}}</p>
+    <h1 class="h1">Which cities <em>win</em>?</h1>
+    <p class="lead">Every champion of the four major leagues, grouped by metro area. Filter by league and era, rank the metros three ways, then set up to eight of them side by side.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:var(--sp-4)">
+      <div class="card" style="padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2)">
+        <span class="stat">{{hero.titles}}</span>
+        <span class="small">titles counted</span>
+        <span class="caption">{{hero.byLeague}}</span>
+      </div>
+      <div class="card" style="padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2)">
+        <span class="stat">{{hero.metros}}</span>
+        <span class="small">metros with a title</span>
+        <span class="caption">{{hero.titleless}} more host a team and are still waiting</span>
+      </div>
+      <div class="card" style="padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2)">
+        <span class="stat">{{hero.slams}}</span>
+        <span class="small">metros with a title in all four leagues</span>
+        <span class="caption">{{hero.slamNames}}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-label="Filters" style="padding-bottom:var(--sp-6)">
+    <div class="panel" style="padding:var(--sp-5);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:var(--sp-5)">
+      <div>
+        <p class="overline">Leagues</p>
+        <div role="group" aria-label="Leagues" style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)">
+          <sc-for list="{{filters.sports}}" as="sp" hint-placeholder-count="4">
+            <button class="btn" type="button" aria-pressed="{{sp.on}}" onClick="{{sp.toggle}}"><svg class="lgi {{sp.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{sp.ic}}"></path></svg>{{sp.code}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <p class="overline">Years</p>
+        <div role="group" aria-label="Years" style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)">
+          <sc-for list="{{filters.eras}}" as="er" hint-placeholder-count="4">
+            <button class="btn" type="button" aria-pressed="{{er.on}}" onClick="{{er.pick}}">{{er.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <p class="overline">Rank by</p>
+        <div role="group" aria-label="Rank by" style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)">
+          <sc-for list="{{filters.metrics}}" as="mt" hint-placeholder-count="3">
+            <button class="btn" type="button" aria-pressed="{{mt.on}}" onClick="{{mt.pick}}">{{mt.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);align-items:center;justify-content:space-between;margin-top:var(--sp-3)">
+      <div style="flex:1 1 320px;min-width:0">
+        <p class="caption">{{filters.summary}}</p>
+        <p class="caption" style="margin-top:var(--sp-1)">{{filters.metricHint}}</p>
+      </div>
+      <button class="btn btn-sm" type="button" disabled="{{filters.isDefault}}" onClick="{{filters.reset}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icons.reset}}"></path></svg>Reset filters</button>
+    </div>
+  </section>
+
+  <section id="rankings" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">Rankings</h2>
+    <p class="lead">{{board.caption}}</p>
+    <p class="caption">{{board.cmpLine}} <a href="#compare">Go to compare</a></p>
+    <sc-if value="{{board.empty}}" hint-placeholder-val="{{false}}">
+      <div class="card" style="padding:var(--sp-5)"><p class="small" style="margin:0">No metro has a title under these filters. Turn a league back on or widen the years.</p></div>
+    </sc-if>
+    <ol class="plain" style="display:flex;flex-direction:column;gap:var(--sp-3)">
+      <sc-for list="{{board.rows}}" as="r" hint-placeholder-count="6">
+        <li class="card" style="padding:var(--sp-4);display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-5);align-items:center">
+          <div style="flex:1 1 220px;min-width:0">
+            <div style="display:flex;align-items:baseline;gap:var(--sp-3)">
+              <span class="mono" style="min-width:2ch;text-align:right">{{r.rank}}</span>
+              <span class="h4">{{r.name}}</span>
+            </div>
+            <p class="caption" style="margin-left:calc(2ch + var(--sp-3))">{{r.region}}</p>
+          </div>
+          <div style="flex:2 1 280px;min-width:0">
+            <div role="img" aria-label="{{r.barLabel}}" style="position:relative;height:18px;border-radius:999px;background:var(--sunken);overflow:hidden">
+              <sc-if value="{{r.isTitles}}" hint-placeholder-val="{{true}}">
+                <div style="display:flex;height:100%;gap:2px;width:{{r.fill}}%">
+                  <sc-for list="{{r.segs}}" as="sg" hint-placeholder-count="3">
+                    <div class="{{sg.cls}}" style="flex:{{sg.n}} 1 0%;min-width:4px" title="{{sg.tip}}"></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{r.isPerm}}" hint-placeholder-val="{{false}}">
+                <div style="height:100%;width:{{r.fill}}%;background:var(--brand);border-radius:999px"></div>
+              </sc-if>
+              <sc-if value="{{r.isIndex}}" hint-placeholder-val="{{false}}">
+                <div style="position:absolute;top:0;bottom:0;left:{{r.left}}%;width:{{r.w}}%;background:{{r.bg}}"></div>
+                <div style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:var(--ink)"></div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="flex:0 0 auto;text-align:right;min-width:92px">
+            <div class="stat">{{r.value}}</div>
+            <div class="mono">{{r.unit}}</div>
+          </div>
+          <div style="flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-4);border-top:1px solid var(--line);padding-top:var(--sp-3)">
+            <sc-for list="{{r.counts}}" as="ct" hint-placeholder-count="4">
+              <span class="small" style="display:inline-flex;align-items:center;gap:6px"><svg class="lgi {{ct.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ct.ic}}"></path></svg>{{ct.code}} <strong>{{ct.n}}</strong></span>
+            </sc-for>
+            <span class="caption">Last title {{r.last}}</span>
+            <span class="caption">{{r.perm}}</span>
+            <button class="btn btn-sm" type="button" style="margin-left:auto" aria-pressed="{{r.inCompare}}" disabled="{{r.full}}" onClick="{{r.toggle}}">{{r.btnLabel}}</button>
+          </div>
+        </li>
+      </sc-for>
+    </ol>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center">
+      <button class="btn" type="button" onClick="{{board.toggleAll}}">{{board.toggleLabel}}</button>
+      <sc-if value="{{board.hasMissing}}" hint-placeholder-val="{{false}}">
+        <p class="caption" style="flex:1 1 320px">{{board.missingNote}}</p>
+      </sc-if>
+    </div>
+  </section>
+
+  <section id="map" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">Where the titles <em>cluster</em></h2>
+    <p class="lead">A density map of the same metros. Brighter, larger glows mean more {{map.metricWord}}. It follows the league, year and ranking filters above. Select a pin to add or remove that metro in the compare.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center">
+      <div role="group" aria-label="Map view" style="display:flex;flex-wrap:wrap;gap:var(--sp-2)">
+        <sc-for list="{{map.views}}" as="vw" hint-placeholder-count="2">
+          <button class="btn" type="button" aria-pressed="{{vw.on}}" onClick="{{vw.pick}}">{{vw.label}}</button>
+        </sc-for>
+      </div>
+      <button class="btn" type="button" aria-pressed="{{map.labelsOn}}" onClick="{{map.toggleLabels}}">Metro names</button>
+      <p class="caption" style="flex:1 1 280px">{{map.legendText}}</p>
+    </div>
+    <div class="mapwrap" style="width:{{map.width}};aspect-ratio:{{map.aspect}}">
+      <svg viewBox="{{map.viewBox}}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{map.alt}}" style="position:absolute;left:0;top:0;width:100%;height:100%;display:block">
+        <path d="{{map.paths.mexico}}" fill="var(--line)" stroke="var(--line-strong)" stroke-width="0.8"></path>
+        <path d="{{map.paths.canada}}" fill="var(--line)" stroke="var(--line)" stroke-width="6" stroke-linejoin="round"></path>
+        <path d="{{map.paths.canada}}" fill="var(--line)" stroke="var(--line-strong)" stroke-width="0.8"></path>
+        <path d="{{map.paths.nation}}" fill="var(--surface)" stroke="var(--ink-muted)" stroke-width="1"></path>
+        <path d="{{map.paths.states}}" fill="none" stroke="var(--line-strong)" stroke-width="0.5" opacity="0.6"></path>
+      </svg>
+      <sc-for list="{{map.blobs}}" as="bl" hint-placeholder-count="20">
+        <div aria-hidden="true" style="{{bl.style}}"></div>
+      </sc-for>
+      <sc-for list="{{map.pins}}" as="pn" hint-placeholder-count="20">
+        <button class="pin" type="button" style="{{pn.style}}" aria-pressed="{{pn.sel}}" aria-label="{{pn.aria}}" title="{{pn.tip}}" onClick="{{pn.toggle}}"><i></i>
+          <sc-if value="{{pn.hasLabel}}" hint-placeholder-val="{{true}}"><span class="pinlbl">{{pn.name}}</span></sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <p class="small" style="margin:0">{{map.stat}}</p>
+  </section>
+
+  <section id="compare" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">Compare metros <em>side by side</em></h2>
+    <p class="lead">Pick up to eight. Counts here follow the league and year filters above; the standing and team lists always show today.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-3);align-items:center">
+      <sc-for list="{{cmp.chips}}" as="ch" hint-placeholder-count="4">
+        <span class="chip" draggable="true" title="Drag to reorder" onDragStart="{{ch.dragStart}}" onDragOver="{{ch.dragOver}}" onDragLeave="{{ch.dragLeave}}" onDrop="{{ch.drop}}" onDragEnd="{{ch.dragEnd}}"><button class="chipx" type="button" data-grip="true" aria-label="{{ch.gripLabel}}" onKeyDown="{{ch.key}}" style="cursor:grab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icons.grip}}"></path></svg></button>{{ch.name}}<button class="chipx" type="button" aria-label="{{ch.removeLabel}}" onClick="{{ch.remove}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icons.x}}"></path></svg></button></span>
+      </sc-for>
+      <label class="sr-only" for="addmetro">Add a metro to compare</label>
+      <select id="addmetro" class="select" value="{{cmp.addValue}}" onChange="{{cmp.onAdd}}">
+        <option value="">{{cmp.addPlaceholder}}</option>
+        <sc-for list="{{cmp.options}}" as="op" hint-placeholder-count="5">
+          <option value="{{op.id}}">{{op.name}}</option>
+        </sc-for>
+      </select>
+    </div>
+    <p class="caption">{{cmp.orderHint}}</p>
+    <p class="sr-only" aria-live="polite">{{cmp.note}}</p>
+    <sc-if value="{{cmp.empty}}" hint-placeholder-val="{{false}}">
+      <div class="card" style="padding:var(--sp-5)"><p class="small" style="margin:0">Choose a metro above, or use Add to compare in the rankings.</p></div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:var(--sp-5)">
+      <sc-for list="{{cmp.cards}}" as="c" hint-placeholder-count="4">
+        <article class="card" style="padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-4)">
+          <header>
+            <h3 class="h4">{{c.name}}</h3>
+            <p class="caption">{{c.region}} · {{c.pop}}</p>
+          </header>
+          <div style="display:flex;align-items:baseline;gap:var(--sp-2)">
+            <span class="stat">{{c.total}}</span>
+            <span class="mono">titles</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-2)">
+            <sc-for list="{{c.bars}}" as="b" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:62px 1fr 28px;gap:var(--sp-2);align-items:center">
+                <span class="mono" style="display:inline-flex;align-items:center;gap:6px"><svg class="lgi {{b.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{b.ic}}"></path></svg>{{b.code}}</span>
+                <div style="height:10px;border-radius:999px;background:var(--sunken);overflow:hidden"><div class="{{b.cls}}" style="height:100%;width:{{b.pct}}%;border-radius:999px"></div></div>
+                <span class="small" style="text-align:right">{{b.n}}</span>
+              </div>
+            </sc-for>
+          </div>
+          <dl style="margin:0;display:flex;flex-direction:column;gap:var(--sp-2)">
+            <sc-for list="{{c.facts}}" as="f" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;gap:var(--sp-3);border-top:1px solid var(--line);padding-top:var(--sp-2)">
+                <dt class="small" style="color:var(--ink-muted)">{{f.k}}</dt>
+                <dd class="small" style="margin:0;text-align:right;font-weight:600">{{f.v}}</dd>
+              </div>
+            </sc-for>
+          </dl>
+          <div>
+            <p class="overline">Standing today</p>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)">
+              <sc-for list="{{c.status}}" as="s" hint-placeholder-count="4">
+                <span class="stchip {{s.cls}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.d}}"></path></svg>{{s.code}} {{s.word}}</span>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <p class="overline">Teams today</p>
+            <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)">
+              <sc-for list="{{c.teams}}" as="tm" hint-placeholder-count="4">
+                <span class="small" style="display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--line);border-radius:999px"><svg class="lgi {{tm.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{tm.ic}}"></path></svg><sc-if value="{{tm.has}}" hint-placeholder-val="{{true}}"><span class="tsw" aria-hidden="true"><sc-for list="{{tm.sw}}" as="tc" hint-placeholder-count="2"><i style="background:{{tc.c}}"></i></sc-for></span></sc-if>{{tm.text}}</span>
+              </sc-for>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+    <h3 class="h3" style="margin-top:var(--sp-5)">Head to head</h3>
+    <div class="card" style="overflow-x:auto">
+      <div style="min-width:{{cmp.h2h.minW}}px">
+        <div style="display:grid;grid-template-columns:{{cmp.h2h.cols}};background:var(--sunken)">
+          <div class="overline" style="padding:var(--sp-3) var(--sp-4)">Measure</div>
+          <sc-for list="{{cmp.h2h.heads}}" as="hd" hint-placeholder-count="4">
+            <div class="small" style="padding:var(--sp-3) var(--sp-4);font-weight:600">{{hd.name}}</div>
+          </sc-for>
+        </div>
+        <sc-for list="{{cmp.h2h.rows}}" as="hr" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:{{cmp.h2h.cols}};border-top:1px solid var(--line);align-items:center">
+            <div class="small" style="padding:var(--sp-3) var(--sp-4);color:var(--ink-muted)">{{hr.label}}</div>
+            <sc-for list="{{hr.cells}}" as="hc" hint-placeholder-count="4">
+              <div class="small" style="padding:var(--sp-3) var(--sp-4);display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2)">
+                <span style="font-weight:{{hc.w}}">{{hc.text}}</span>
+                <sc-if value="{{hc.leads}}" hint-placeholder-val="{{false}}">
+                  <span class="leadchip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{icons.check}}"></path></svg>Leads</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="time" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">When they <em>won</em></h2>
+    <p class="lead">The same metros as above, shown by decade and then year by year. Each block is one title.</p>
+    <h3 class="h3">Titles by decade</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr));gap:var(--sp-5)">
+      <sc-for list="{{time.decades}}" as="dm" hint-placeholder-count="4">
+        <div class="card" style="padding:var(--sp-4);overflow-x:auto">
+          <div style="min-width:480px">
+            <h4 class="h4" style="margin-bottom:var(--sp-3)">{{dm.name}} <span class="mono">{{dm.sum}}</span></h4>
+            <div style="display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:6px;align-items:stretch;height:{{time.chartH}}px;border-bottom:1px solid var(--line-strong)">
+              <sc-for list="{{dm.cols}}" as="dc" hint-placeholder-count="13">
+                <div style="display:flex;flex-direction:column-reverse;gap:2px" title="{{dc.tip}}">
+                  <sc-for list="{{dc.segs}}" as="ds" hint-placeholder-count="2">
+                    <div class="{{ds.cls}}" style="height:{{ds.h}}px;border-radius:3px"></div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:6px;margin-top:var(--sp-1)">
+              <sc-for list="{{time.labels}}" as="lb" hint-placeholder-count="13">
+                <span class="caption" style="text-align:center;font-size:12px">{{lb}}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <h3 class="h3" style="margin-top:var(--sp-5)">Year by year</h3>
+    <div style="display:flex;flex-direction:column;gap:var(--sp-4)">
+      <sc-for list="{{time.codes}}" as="bm" hint-placeholder-count="4">
+        <div class="card" style="padding:var(--sp-4);overflow-x:auto">
+          <div style="min-width:760px">
+            <h4 class="h4" style="margin-bottom:var(--sp-2)">{{bm.name}}</h4>
+            <sc-for list="{{bm.lanes}}" as="ln" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:66px 1fr;gap:var(--sp-2);align-items:center;margin-top:4px">
+                <span class="mono" style="display:inline-flex;align-items:center;gap:6px"><svg class="lgi {{ln.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{ln.ic}}"></path></svg>{{ln.code}}</span>
+                <div style="display:grid;grid-template-columns:repeat(124,minmax(0,1fr));gap:1px;opacity:{{ln.op}}">
+                  <sc-for list="{{ln.cells}}" as="cl" hint-placeholder-count="124">
+                    <div class="{{cl.cls}}" style="height:14px" title="{{cl.tip}}"></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;margin-left:calc(66px + var(--sp-2));margin-top:var(--sp-1)">
+              <span class="caption">1903</span><span class="caption">1950</span><span class="caption">2000</span><span class="caption">2026</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="race" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">The race to the <em>top</em></h2>
+    <p class="lead">{{race.lead}}</p>
+    <div class="panel" style="padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-4)">
+      <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-4);align-items:center">
+        <button class="btn btn-primary" type="button" onClick="{{race.togglePlay}}">{{race.playLabel}}</button>
+        <label class="sr-only" for="raceyear">Year</label>
+        <input id="raceyear" type="range" min="{{race.min}}" max="2026" step="1" value="{{race.year}}" onChange="{{race.onInput}}" style="flex:1 1 240px;min-width:0;accent-color:var(--brand);height:44px">
+        <span class="stat" style="min-width:4ch;text-align:right">{{race.year}}</span>
+      </div>
+      <p class="small" style="margin:0">{{race.leaderText}}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);min-height:32px;align-items:center">
+        <span class="overline">Champions that year</span>
+        <sc-for list="{{race.winners}}" as="w" hint-placeholder-count="4">
+          <span class="small" style="display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--line);border-radius:999px"><svg class="lgi {{w.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{w.ic}}"></path></svg><sc-if value="{{w.has}}" hint-placeholder-val="{{true}}"><span class="tsw" aria-hidden="true"><sc-for list="{{w.sw}}" as="tc" hint-placeholder-count="2"><i style="background:{{tc.c}}"></i></sc-for></span></sc-if>{{w.text}}</span>
+        </sc-for>
+        <sc-if value="{{race.noWinners}}" hint-placeholder-val="{{false}}">
+          <span class="caption">{{race.noWinnersText}}</span>
+        </sc-if>
+      </div>
+      <ol class="plain" style="display:flex;flex-direction:column;gap:var(--sp-2)">
+        <sc-for list="{{race.rows}}" as="rr" hint-placeholder-count="12">
+          <li style="display:grid;grid-template-columns:minmax(120px,200px) 1fr 3ch;gap:var(--sp-3);align-items:center">
+            <span class="small" style="font-weight:600">{{rr.name}}</span>
+            <div role="img" aria-label="{{rr.label}}" style="height:16px;border-radius:999px;background:var(--sunken);overflow:hidden">
+              <div style="display:flex;gap:2px;height:100%;width:{{rr.fill}}%">
+                <sc-for list="{{rr.segs}}" as="rs" hint-placeholder-count="3">
+                  <div class="{{rs.cls}}" style="flex:{{rs.n}} 1 0%;min-width:3px"></div>
+                </sc-for>
+              </div>
+            </div>
+            <span class="small" style="text-align:right;font-weight:600">{{rr.total}}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+  </section>
+
+  <section id="matrix" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">Where each metro stands, <em>league by league</em></h2>
+    <p class="lead">All time, all years, ignoring the filters. A metro can have won, be waiting with a team today, have lost its team, or never have had one.</p>
+    <div class="card" style="overflow:auto;max-height:680px">
+      <div style="min-width:720px">
+        <div style="display:grid;grid-template-columns:minmax(200px,1.6fr) repeat(4,minmax(110px,1fr)) 80px;background:var(--sunken);position:sticky;top:0">
+          <div class="overline" style="padding:var(--sp-3) var(--sp-4)">Metro</div>
+          <sc-for list="{{legend}}" as="mh" hint-placeholder-count="4">
+            <div class="overline" style="padding:var(--sp-3) var(--sp-2)">{{mh.code}}</div>
+          </sc-for>
+          <div class="overline" style="padding:var(--sp-3) var(--sp-2);text-align:right">Titles</div>
+        </div>
+        <sc-for list="{{matrix}}" as="mr" hint-placeholder-count="10">
+          <div style="display:grid;grid-template-columns:minmax(200px,1.6fr) repeat(4,minmax(110px,1fr)) 80px;border-top:1px solid var(--line);align-items:center">
+            <div style="padding:var(--sp-2) var(--sp-4)"><span class="small" style="font-weight:600">{{mr.name}}</span> <span class="caption">{{mr.region}}</span></div>
+            <sc-for list="{{mr.cells}}" as="mc" hint-placeholder-count="4">
+              <div style="padding:var(--sp-2)"><span class="stchip {{mc.cls}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{mc.d}}"></path></svg>{{mc.text}}</span></div>
+            </sc-for>
+            <div class="small" style="padding:var(--sp-2);text-align:right;font-weight:600">{{mr.total}}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4)">
+      <span class="caption">Won: at least one title in this league.</span>
+      <span class="caption">Waiting: a team today, no title in this metro.</span>
+      <span class="caption">Team left: had a team once, none now.</span>
+      <span class="caption">No team: never hosted one.</span>
+    </div>
+  </section>
+
+  <section id="waiting" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-4)">
+    <h2 class="h2">Still <em>waiting</em></h2>
+    <p class="lead">Teams playing today that have never won, then the champions with the longest gaps. Pick a league, or All.</p>
+    <div role="tablist" aria-label="League" style="display:flex;flex-wrap:wrap;gap:var(--sp-2)">
+      <sc-for list="{{waiting.tabs}}" as="wt" hint-placeholder-count="5">
+        <button class="btn" type="button" role="tab" aria-selected="{{wt.on}}" onClick="{{wt.pick}}"><sc-if value="{{wt.hasIcon}}" hint-placeholder-val="{{false}}"><svg class="lgi {{wt.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{wt.ic}}"></path></svg></sc-if>{{wt.label}} <span class="mono">{{wt.count}}</span></button>
+      </sc-for>
+    </div>
+    <div role="tabpanel" aria-label="{{waiting.panelLabel}}" style="display:flex;flex-direction:column;gap:var(--sp-4)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:var(--sp-5)">
+      <sc-for list="{{waiting.cols}}" as="wc" hint-placeholder-count="4">
+        <div class="card" style="padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-3)">
+          <div style="display:flex;align-items:center;gap:var(--sp-2)"><svg class="lgi {{wc.lc}}" viewBox="0 0 24 24" aria-hidden="true" style="width:22px;height:22px"><path d="{{wc.ic}}"></path></svg><h3 class="h4">{{wc.title}}</h3></div>
+          <p class="caption">{{wc.count}} of {{wc.total}} teams. {{wc.note}}</p>
+          <ul class="plain" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));column-gap:var(--sp-5)">
+            <sc-for list="{{wc.rows}}" as="wr" hint-placeholder-count="10">
+              <li style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3);border-top:1px solid var(--line);padding:var(--sp-2) 0">
+                <span class="small"><sc-if value="{{wr.has}}" hint-placeholder-val="{{true}}"><span class="tsw" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><sc-for list="{{wr.sw}}" as="tc" hint-placeholder-count="2"><i style="background:{{tc.c}}"></i></sc-for></span></sc-if><strong>{{wr.name}}</strong> <span style="color:var(--ink-muted)">{{wr.metro}}</span>
+                  <sc-if value="{{wr.pending}}" hint-placeholder-val="{{false}}"><span class="pendchip">World Series now</span></sc-if>
+                </span>
+                <span class="small" style="text-align:right;white-space:nowrap">{{wr.wait}} yrs <span class="caption">since {{wr.since}}</span></span>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-for>
+    </div>
+    <h3 class="h3" style="margin-top:var(--sp-5)">{{waiting.gapTitle}}</h3>
+    <div class="card" style="overflow-x:auto">
+      <div style="min-width:520px">
+        <sc-for list="{{waiting.droughts}}" as="dr" hint-placeholder-count="12">
+          <div style="display:grid;grid-template-columns:minmax(150px,1.4fr) 70px minmax(140px,1.4fr) 110px 90px;gap:var(--sp-3);align-items:center;border-top:1px solid var(--line);padding:var(--sp-2) var(--sp-4)">
+            <span class="small" style="font-weight:600">{{dr.name}}</span>
+            <span class="mono">{{dr.lg}}</span>
+            <span class="small" style="color:var(--ink-muted)">{{dr.metro}}</span>
+            <span class="small">last won {{dr.last}}</span>
+            <span class="small" style="text-align:right;font-weight:600">{{dr.yrs}} yrs</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section id="notes" class="wrap" style="padding-top:var(--sp-6);padding-bottom:var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-5)">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3) var(--sp-5)">
+      <div style="flex:1 1 320px;min-width:0">
+        <h2 class="h2">About the <em>data</em></h2>
+        <p class="caption" style="margin-top:var(--sp-2)">How the numbers are built and the 2026 sources.</p>
+      </div>
+      <button class="btn" type="button" aria-expanded="{{notes.isOpen}}" aria-controls="notes-body" onClick="{{notes.toggle}}">{{notes.label}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{notes.chev}}"></path></svg></button>
+    </div>
+    <sc-if value="{{notes.isOpen}}" hint-placeholder-val="{{false}}">
+    <div id="notes-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:var(--sp-5)">
+      <div class="card" style="padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-3)">
+        <h3 class="h4">How the numbers are built</h3>
+        <ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:var(--sp-2)">
+          <li class="small">A year is the season-ending year, so the NFL year is the Super Bowl's calendar year. MLB has no champion in 1904 or 1994, and the NHL none in 2005.</li>
+          <li class="small">Metros follow the grouping in your main sheet: Anaheim with Los Angeles, Golden State, Oakland, San Francisco and San Jose as one Bay Area, Green Bay with Milwaukee, and Brooklyn on its own. Las Vegas and Oklahoma City are new, with one title each.</li>
+          <li class="small">Per-million figures use your workbook's 2020 populations. Las Vegas (2,265,461) and Oklahoma City (1,425,695) are 2020 Census metro counts I added. Milwaukee's population does not include Green Bay.</li>
+          <li class="small">Against population share compares each metro's titles with an even spread by population across the metros that have a figure. 1.0× is an even share.</li>
+          <li class="small">Start years in Still waiting come from league histories, not your workbook, so verify them. Waiting is counted from the later of the team's first season and 1903 (MLB), 1927 (NHL), 1947 (NBA) or 1967 (NFL). NFL and AFL championships before the first Super Bowl are not counted.</li>
+          <li class="small">The Athletics are listed in Sacramento, where they play from 2025. Their past titles stay with Philadelphia and Oakland.</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-3)">
+        <h3 class="h4">Sources for 2026</h3>
+        <ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:var(--sp-2)">
+          <li class="small"><a href="https://en.wikipedia.org/wiki/2026_Stanley_Cup_Final">2026 Stanley Cup Final</a>: Carolina beat Vegas 4–2.</li>
+          <li class="small"><a href="https://en.wikipedia.org/wiki/2026_NBA_Finals">2026 NBA Finals</a>: New York beat San Antonio 4–1.</li>
+          <li class="small"><a href="https://www.aol.com/articles/won-2026-super-bowl-seahawks-032337094.html">Super Bowl LX report</a>: Seattle beat New England 29–13.</li>
+          <li class="small"><a href="https://www.nbcsports.com/mlb/news/brewers-earn-first-world-series-title-in-franchise-history-with-4-1-win-over-rays-in-game-5">World Series Game 5 report</a> and <a href="https://www.mlb.com/news/brewers-beat-rays-game-5-win-2026-world-series">MLB.com</a>: Milwaukee beat Tampa Bay 4–1.</li>
+        </ul>
+      </div>
+    </div>
+    </sc-if>
+  </section>
+
+</div>
+</script>
+
+<script src="/vendor/morphdom-umd.min.js"></script>
+<script src="/runtime.js"></script>
+<script src="/app.js"></script>
+<script src="/main.js"></script>
+</body>
+</html>

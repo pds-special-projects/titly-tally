@@ -1,0 +1,14 @@
+{
+  "name": "titly-tally",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cities of Champions: every MLB, NHL, NBA and NFL champion since 1903, grouped by metro area.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "morphdom": "^2.7.8",
+    "wrangler": "^4.158.0"
+  }
+}
