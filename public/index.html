@@ -72,6 +72,7 @@ body{margin:0;background:#fbfaf6}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .coc .stickytop{position:sticky;top:0;z-index:30}
+.coc a.hdr-brand{color:var(--ink);text-decoration:none;min-height:44px}
 .coc section[id]{scroll-margin-top:calc(var(--sticky-h,150px) + 16px)}
 .coc .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-4)}
 .coc .hdr-brand{order:1;display:flex;align-items:center;gap:var(--sp-2);flex:0 0 auto}
@@ -139,10 +140,10 @@ html{scroll-behavior:smooth}
 
   <header style="background:var(--surface);border-bottom:1px solid var(--line)">
     <div class="wrap hdr" style="padding-top:var(--sp-2);padding-bottom:var(--sp-2)">
-      <div class="hdr-brand">
+      <a class="hdr-brand" href="#top" aria-label="Cities of Champions, back to top">
         <span aria-hidden="true" style="width:20px;height:20px;border-radius:6px;background:var(--brand);display:inline-block"></span>
         <span style="font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.2;white-space:nowrap">Cities of Champions</span>
-      </div>
+      </a>
       <nav class="hdr-nav" aria-label="Sections">
         <a class="navlink" href="#rankings">Rankings</a>
         <a class="navlink" href="#map">Map</a>
@@ -602,8 +603,9 @@ html{scroll-behavior:smooth}
   </section>
 
   <footer style="background:var(--surface);border-top:1px solid var(--line)">
-    <div class="wrap" style="padding-top:var(--sp-5);padding-bottom:var(--sp-5)">
+    <div class="wrap" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-3) var(--sp-5);padding-top:var(--sp-5);padding-bottom:var(--sp-5)">
       <p class="small" style="margin:0">Built by <a href="https://petrin.dev" target="_blank" rel="noopener">Petrin Development Services<span class="sr-only"> (opens in a new tab)</span></a></p>
+      <a class="btn btn-sm" href="#top" style="text-decoration:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>Back to top</a>
     </div>
   </footer>
 
