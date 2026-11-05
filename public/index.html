@@ -69,8 +69,10 @@ body{margin:0;background:#fbfaf6}
 .coc .navlink{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-3);border-radius:12px;text-decoration:none;font-weight:600;font-size:14.6px;color:var(--ink)}
 .coc .navlink:hover{background:var(--sunken);color:var(--ink)}
 .coc .btn[aria-selected="true"]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-text)}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .coc .stickytop{position:sticky;top:0;z-index:30}
-.coc section[id]{scroll-margin-top:150px}
+.coc section[id]{scroll-margin-top:calc(var(--sticky-h,150px) + 16px)}
 .coc .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-4)}
 .coc .hdr-brand{order:1;display:flex;align-items:center;gap:var(--sp-2);flex:0 0 auto}
 .coc .hdr-theme{order:2;margin-left:auto;flex:0 0 auto}
@@ -598,6 +600,12 @@ body{margin:0;background:#fbfaf6}
     </div>
     </sc-if>
   </section>
+
+  <footer style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap" style="padding-top:var(--sp-5);padding-bottom:var(--sp-5)">
+      <p class="small" style="margin:0">Built by <a href="https://petrin.dev" target="_blank" rel="noopener">Petrin Development Services<span class="sr-only"> (opens in a new tab)</span></a></p>
+    </div>
+  </footer>
 
 </div>
 </script>
