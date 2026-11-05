@@ -166,6 +166,14 @@ html{scroll-behavior:smooth}
 .coc .pin:hover i{transform:scale(1.35)}
 .coc .pin[aria-pressed="true"] i{background:var(--accent)}
 .coc .pinlbl{position:absolute;left:24px;top:50%;transform:translateY(-50%);white-space:nowrap;pointer-events:none;font-size:12.5px;font-weight:600;line-height:1.2;color:var(--ink);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 5px var(--paper)}
+.coc .racelist{position:relative;overflow:hidden;margin:0;padding:0;list-style:none}
+.coc .racerow{position:absolute;left:0;right:0;top:0;height:28px;display:grid;grid-template-columns:clamp(100px,30%,200px) minmax(0,1fr) 3ch;gap:var(--sp-3);align-items:center;transition:transform var(--race-t,200ms) var(--race-e,ease),opacity var(--race-t,200ms) var(--race-e,ease)}
+.coc .racename{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coc .racebar{height:16px;border-radius:999px;background:var(--sunken);overflow:hidden}
+.coc .racefill{display:flex;height:100%;transition:width var(--race-t,200ms) var(--race-e,ease)}
+.coc .racefill>div{flex:0 1 0%;height:100%;transition:flex-grow var(--race-t,200ms) var(--race-e,ease),min-width var(--race-t,200ms) var(--race-e,ease)}
+.coc .racetotal{text-align:right;font-weight:600}
+@media (prefers-reduced-motion:reduce){.coc .racerow,.coc .racefill,.coc .racefill>div{transition:none}}
 .coc .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);border:0;white-space:nowrap}
 .coc ul.plain,.coc ol.plain{list-style:none;margin:0;padding:0}
 @media (prefers-reduced-motion:reduce){.coc .btn{transition:none}.coc .btn:hover{transform:none}}
@@ -522,6 +530,11 @@ html{scroll-behavior:smooth}
     <div class="panel" style="padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-4)">
       <div style="display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-4);align-items:center">
         <button class="btn btn-primary" type="button" onClick="{{race.togglePlay}}">{{race.playLabel}}</button>
+        <div role="group" aria-label="Speed" style="display:flex;gap:var(--sp-1)">
+          <sc-for list="{{race.speeds}}" as="sp" hint-placeholder-count="2">
+            <button class="btn btn-sm" type="button" aria-pressed="{{sp.on}}" onClick="{{sp.pick}}">{{sp.label}}</button>
+          </sc-for>
+        </div>
         <label class="sr-only" for="raceyear">Year</label>
         <input id="raceyear" type="range" min="{{race.min}}" max="2026" step="1" value="{{race.year}}" onChange="{{race.onInput}}" style="flex:1 1 240px;min-width:0;accent-color:var(--brand);height:44px">
         <span class="stat" style="min-width:4ch;text-align:right">{{race.year}}</span>
@@ -543,18 +556,19 @@ html{scroll-behavior:smooth}
           </sc-if>
         </ul>
       </div>
-      <ol class="plain" style="display:flex;flex-direction:column;gap:var(--sp-2)">
+      <p class="sr-only">{{race.srSummary}}</p>
+      <ol class="plain racelist" aria-hidden="true" style="--race-t:{{race.tms}}ms;--race-e:{{race.ease}};height:{{race.listH}}px">
         <sc-for list="{{race.rows}}" as="rr" hint-placeholder-count="12">
-          <li style="display:grid;grid-template-columns:minmax(120px,200px) 1fr 3ch;gap:var(--sp-3);align-items:center">
-            <span class="small" style="font-weight:600">{{rr.name}}</span>
-            <div role="img" aria-label="{{rr.label}}" style="height:16px;border-radius:999px;background:var(--sunken);overflow:hidden">
-              <div style="display:flex;gap:2px;height:100%;width:{{rr.fill}}%">
-                <sc-for list="{{rr.segs}}" as="rs" hint-placeholder-count="3">
-                  <div class="{{rs.cls}}" style="flex:{{rs.n}} 1 0%;min-width:3px"></div>
+          <li id="{{rr.id}}" class="racerow" style="{{rr.style}}">
+            <span class="small racename">{{rr.name}}</span>
+            <div class="racebar">
+              <div class="racefill" style="width:{{rr.fill}}%">
+                <sc-for list="{{rr.segs}}" as="rs" hint-placeholder-count="4">
+                  <div class="{{rs.cls}}" style="flex-grow:{{rs.n}};margin-left:{{rs.ml}}px;min-width:{{rs.minw}}px"></div>
                 </sc-for>
               </div>
             </div>
-            <span class="small" style="text-align:right;font-weight:600">{{rr.total}}</span>
+            <span class="small racetotal">{{rr.total}}</span>
           </li>
         </sc-for>
       </ol>

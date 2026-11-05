@@ -187,6 +187,7 @@ class Component extends DCLogic {
     cmp: ['boston', 'new-york', 'chicago', 'los-angeles'],
     raceYear: NOW,
     playing: false,
+    raceSpeed: 1,
     mapView: 'all',
     mapLabels: true,
     banner: true,
@@ -197,6 +198,17 @@ class Component extends DCLogic {
 
   stopTimer() {
     if (this.timer) { clearInterval(this.timer); this.timer = null; }
+  }
+
+  // 1x is 340ms a season, 2x is 170ms
+  startTimer() {
+    this.stopTimer();
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        if (s.raceYear >= NOW) { this.stopTimer(); return { playing: false }; }
+        return { raceYear: s.raceYear + 1 };
+      });
+    }, 340 / (this.state.raceSpeed || 1));
   }
 
   componentDidMount() {
@@ -601,24 +613,36 @@ class Component extends DCLogic {
     const topN = raceList.length ? rt[raceList[0].i].total : 0;
     const leaders = raceList.filter(m => rt[m.i].total === topN).map(m => m.name);
     const winnersNow = L1.filter(t => t.y === Y).map(t => ({ ...self.sw(t.fi), ...lgm(t.lg), team: t.team, city: t.label, lg: t.lg }));
+    // one keyed row per metro with an era title, positioned by rank so rows glide when the order changes
+    const raceRanked = P.metros.filter(m => tallyEra[m.i].total > 0).sort((x, y) => (rt[y.i].total - rt[x.i].total) || x.name.localeCompare(y.name));
+    const rankOf = {}; raceRanked.forEach((m, k) => { rankOf[m.i] = k; });
+    const raceRows = P.metros.filter(m => tallyEra[m.i].total > 0).map(m => {
+      const a = rt[m.i], shown = a.total > 0 && rankOf[m.i] < 12;
+      const y = (shown ? rankOf[m.i] : 12) * 30;
+      let seen = false;
+      return {
+        id: 'race-' + m.id, name: m.name, total: a.total, fill: a.total ? Math.max(2, a.total / raceMax * 100) : 0,
+        style: 'transform:translateY(' + y + 'px);opacity:' + (shown ? 1 : 0) + (shown ? '' : ';pointer-events:none'),
+        segs: a.c.map((n, li) => { const ml = n > 0 && seen ? 2 : 0; if (n > 0) seen = true; return { cls: 'sw-' + LG[li].toLowerCase(), n, ml, minw: n > 0 ? 3 : 0 }; })
+      };
+    });
     const race = {
       year: Y,
       min: era.from,
       lead: 'Drag the year, or press play, to watch the running total build from ' + era.from + '. It follows the league and year filters above, so every metro starts at zero in the first year of the era and counts only ' + sportsText + '.',
       playLabel: S.playing ? 'Pause' : (Y >= NOW ? 'Play from ' + era.from : 'Play'),
       togglePlay: () => {
-        if (this.timer) { clearInterval(this.timer); this.timer = null; this.setState({ playing: false }); return; }
+        if (this.timer) { this.stopTimer(); this.setState({ playing: false }); return; }
         this.setState(s => {
           const f = (ERAS.find(x => x.id === s.era) || ERAS[0]).from;
           return { playing: true, raceYear: (s.raceYear >= NOW || s.raceYear < f) ? f : s.raceYear };
         });
-        this.timer = setInterval(() => {
-          this.setState(s => {
-            if (s.raceYear >= NOW) { if (self.timer) { clearInterval(self.timer); self.timer = null; } return { playing: false }; }
-            return { raceYear: s.raceYear + 1 };
-          });
-        }, 170);
+        this.startTimer();
       },
+      speeds: [1, 2].map(n => ({ label: n + '×', on: S.raceSpeed === n, pick: () => { this.setState({ raceSpeed: n }); if (this.timer) this.startTimer(); } })),
+      tms: S.playing ? Math.round(340 / S.raceSpeed * 0.94) : 180,
+      ease: S.playing ? 'linear' : 'ease',
+      listH: 12 * 30 - 2,
       onInput: (e) => {
         const v = parseInt(e && e.target ? e.target.value : '', 10);
         if (!isNaN(v)) this.setState({ raceYear: Math.max(era.from, Math.min(NOW, v)) });
@@ -626,14 +650,8 @@ class Component extends DCLogic {
       leaderText: leaders.length ? ('Through ' + Y + ', ' + leaders.slice(0, 3).join(leaders.length === 2 ? ' and ' : ', ') + (leaders.length > 3 ? ' and others' : '') + (leaders.length > 1 ? ' lead with ' : ' leads with ') + topN + (topN === 1 ? ' title.' : ' titles.')) : 'No titles yet in the selected leagues.',
       winners: winnersNow,
       noWinners: winnersNow.length === 0,
-      noWinnersText: (Y === 1904 || Y === 1994 || Y === 2005) ? 'No champion this year in some leagues (MLB 1904 and 1994, NHL 2005).' : 'No champion in the selected leagues this year.',      rows: raceList.map(m => {
-        const a = rt[m.i];
-        return {
-          name: m.name, total: a.total, fill: Math.max(2, a.total / raceMax * 100),
-          label: m.name + ': ' + a.total + ' titles through ' + Y,
-          segs: a.c.map((n, li) => ({ cls: 'sw-' + LG[li].toLowerCase(), n })).filter(s => s.n > 0)
-        };
-      })
+      noWinnersText: (Y === 1904 || Y === 1994 || Y === 2005) ? 'No champion this year in some leagues (MLB 1904 and 1994, NHL 2005).' : 'No champion in the selected leagues this year.',      rows: raceRows,
+      srSummary: 'Through ' + Y + ': ' + raceList.map(m => m.name + ' ' + rt[m.i].total).join(', ') + '.'
     };
 
     // ---- matrix
