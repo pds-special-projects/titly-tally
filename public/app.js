@@ -600,7 +600,7 @@ class Component extends DCLogic {
     const raceList = P.metros.filter(m => rt[m.i].total > 0).sort((a, b) => (rt[b.i].total - rt[a.i].total) || a.name.localeCompare(b.name)).slice(0, 12);
     const topN = raceList.length ? rt[raceList[0].i].total : 0;
     const leaders = raceList.filter(m => rt[m.i].total === topN).map(m => m.name);
-    const winnersNow = L1.filter(t => t.y === Y).map(t => ({ ...self.sw(t.fi), ...lgm(t.lg), text: t.team + ', ' + t.label + ' (' + t.lg + ')' }));
+    const winnersNow = L1.filter(t => t.y === Y).map(t => ({ ...self.sw(t.fi), ...lgm(t.lg), team: t.team, city: t.label, lg: t.lg }));
     const race = {
       year: Y,
       min: era.from,

@@ -73,6 +73,9 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .coc .stickytop{position:sticky;top:0;z-index:30}
 .coc a.hdr-brand{color:var(--ink);text-decoration:none;min-height:44px}
+.coc .winners{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-2) var(--sp-3);align-content:start}
+.coc .winner{display:flex;align-items:center;gap:var(--sp-3);min-height:52px;padding:var(--sp-2) var(--sp-3);border:1px solid var(--line);border-radius:14px;background:var(--sunken)}
+@media (min-width:640px){.coc .winners{grid-template-columns:repeat(2,minmax(0,1fr));min-height:112px}}
 .coc section[id]{scroll-margin-top:calc(var(--sticky-h,150px) + 16px)}
 .coc .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1) var(--sp-4)}
 .coc .hdr-brand{order:1;display:flex;align-items:center;gap:var(--sp-2);flex:0 0 auto}
@@ -466,14 +469,21 @@ html{scroll-behavior:smooth}
         <span class="stat" style="min-width:4ch;text-align:right">{{race.year}}</span>
       </div>
       <p class="small" style="margin:0">{{race.leaderText}}</p>
-      <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2);min-height:32px;align-items:center">
-        <span class="overline">Champions that year</span>
-        <sc-for list="{{race.winners}}" as="w" hint-placeholder-count="4">
-          <span class="small" style="display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--line);border-radius:999px"><svg class="lgi {{w.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{w.ic}}"></path></svg><sc-if value="{{w.has}}" hint-placeholder-val="{{true}}"><span class="tsw" aria-hidden="true"><sc-for list="{{w.sw}}" as="tc" hint-placeholder-count="2"><i style="background:{{tc.c}}"></i></sc-for></span></sc-if>{{w.text}}</span>
-        </sc-for>
-        <sc-if value="{{race.noWinners}}" hint-placeholder-val="{{false}}">
-          <span class="caption">{{race.noWinnersText}}</span>
-        </sc-if>
+      <div>
+        <p class="overline">Champions that year</p>
+        <ul class="plain winners" aria-label="Champions that year" style="margin-top:var(--sp-3)">
+          <sc-for list="{{race.winners}}" as="w" hint-placeholder-count="4">
+            <li class="winner">
+              <svg class="lgi {{w.lc}}" viewBox="0 0 24 24" aria-hidden="true"><path d="{{w.ic}}"></path></svg>
+              <sc-if value="{{w.has}}" hint-placeholder-val="{{true}}"><span class="tsw" aria-hidden="true"><sc-for list="{{w.sw}}" as="tc" hint-placeholder-count="2"><i style="background:{{tc.c}}"></i></sc-for></span></sc-if>
+              <span class="small" style="min-width:0"><strong>{{w.team}}</strong> <span style="color:var(--ink-muted)">{{w.city}}</span></span>
+              <span class="mono" style="margin-left:auto">{{w.lg}}</span>
+            </li>
+          </sc-for>
+          <sc-if value="{{race.noWinners}}" hint-placeholder-val="{{false}}">
+            <li class="caption" style="grid-column:1/-1">{{race.noWinnersText}}</li>
+          </sc-if>
+        </ul>
       </div>
       <ol class="plain" style="display:flex;flex-direction:column;gap:var(--sp-2)">
         <sc-for list="{{race.rows}}" as="rr" hint-placeholder-count="12">
